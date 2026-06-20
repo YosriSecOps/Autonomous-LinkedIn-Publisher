@@ -1,0 +1,29 @@
+{
+  "name": "autonomous-linkedin-publisher",
+  "version": "1.0.0",
+  "description": "Multi-profile autonomous LinkedIn post generator and publisher powered by Antigravity",
+  "main": "scripts/db-manager.js",
+  "type": "module",
+  "scripts": {
+    "db:init": "node scripts/db-manager.js init",
+    "db:seed": "node scripts/db-manager.js seed",
+    "db:profiles": "node scripts/db-manager.js get-active-profiles",
+    "telegram:start": "node scripts/telegram-bot.js start",
+    "publish": "node scripts/linkedin-publisher.js",
+    "test": "node --test tests/"
+  },
+  "keywords": [
+    "linkedin",
+    "automation",
+    "antigravity",
+    "publisher"
+  ],
+  "author": "Yosri Hamdouni",
+  "license": "Proprietary",
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "dotenv": "^17.4.2",
+    "playwright": "^1.61.0",
+    "telegraf": "^4.16.3"
+  }
+}

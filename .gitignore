@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Secrets
+.env
+
+# Database
+memory.db
+
+# Browser session data
+browser-data/
+
+# Generated assets
+assets/generated/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
