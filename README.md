@@ -104,4 +104,4 @@ This software is **NOT free** for commercial, personal, or public use. All right
 
 For business inquiries, usage licenses, or setup assistance, you **must contact the author directly**:
 
-🔗 **[Yosri Hamdouni on LinkedIn](https://www.linkedin.com/in/hamdouni-yosri-06639a358)**
+🔗 **[Yosri Hamdouni on LinkedIn](https://www.linkedin.com/in/hamdouni-yosri)**
