@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { getProfileByChatId, upsertProfileByChatId, updateProfileField } from '../src/database/profiles.js';
+import { insertRequest } from '../src/database/requests.js';
 
 dotenv.config();
 
@@ -161,6 +162,30 @@ async function runBot() {
 
         bot.command('connect', (ctx) => {
             ctx.scene.enter('connectUpdate');
+        });
+
+        bot.command('post', async (ctx) => {
+            const chatId = ctx.chat.id.toString();
+            const profile = getProfileByChatId(chatId);
+            
+            if (!profile || profile.onboarding_state !== 'completed') {
+                return ctx.reply("Please complete your setup first by typing /start.");
+            }
+
+            // Extract everything after "/post "
+            const text = ctx.message.text.substring(6).trim();
+            const sourceContent = text.length > 0 ? text : null;
+
+            try {
+                insertRequest(profile.id, sourceContent);
+                if (sourceContent) {
+                    ctx.reply("Got it! I've added this to the queue. The AI will analyze the content and send you a draft soon.");
+                } else {
+                    ctx.reply("Got it! I've added a request to the queue. The AI will generate a fresh post tailored to your field soon.");
+                }
+            } catch (e) {
+                ctx.reply("Error queuing your request: " + e.message);
+            }
         });
 
         bot.on('callback_query', async (ctx) => {

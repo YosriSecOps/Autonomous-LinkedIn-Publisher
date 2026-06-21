@@ -26,3 +26,11 @@ CREATE TABLE IF NOT EXISTS Post_History (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     published_at DATETIME
 );
+
+CREATE TABLE IF NOT EXISTS Pending_Requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    profile_id INTEGER NOT NULL REFERENCES Profiles(id),
+    source_content TEXT,
+    status TEXT DEFAULT 'pending' CHECK(status IN ('pending','processing','completed','failed')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

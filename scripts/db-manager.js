@@ -1,6 +1,7 @@
 import db from '../src/database/connection.js';
 import { getActiveProfiles, getProfileById, getProfileByChatId } from '../src/database/profiles.js';
 import { getRecentTopics, insertDraft, updateStatus, markPublished } from '../src/database/postHistory.js';
+import { insertRequest, getPendingRequests, updateRequestStatus } from '../src/database/requests.js';
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -54,6 +55,17 @@ async function main() {
                 break;
             case 'mark-published':
                 markPublished(params.postId, params.url);
+                console.log(JSON.stringify({ success: true }));
+                break;
+            case 'insert-request':
+                const reqId = insertRequest(params.profileId, params.sourceContent || null);
+                console.log(JSON.stringify({ id: reqId }));
+                break;
+            case 'get-pending-requests':
+                console.log(JSON.stringify(getPendingRequests()));
+                break;
+            case 'update-request-status':
+                updateRequestStatus(params.requestId, params.status);
                 console.log(JSON.stringify({ success: true }));
                 break;
             default:

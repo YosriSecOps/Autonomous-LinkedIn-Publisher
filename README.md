@@ -91,8 +91,12 @@ npm run telegram:start
 - `/field` — Change your active field or theme.
 - `/connect` — Update your LinkedIn email or password.
 
-### Autonomous Publishing
-The Antigravity agent uses the `.agents/skills/linkedin-publisher/SKILL.md` instruction set. When scheduled, the agent loops through all active profiles, drafts content, generates images, asks for Telegram approval, and triggers the Playwright publisher upon approval.
+### On-Demand Publishing
+The system is now driven by your requests! 
+1. Send `/post https://github.com/...` or `/post Check out this article...` to the bot.
+2. The bot will queue your request.
+3. The Antigravity agent runs the `linkedin-publisher` skill on a schedule (e.g. every 15 minutes). It will read your queued links, draft the content, and send you the generated post and image for approval.
+4. Click ✅ Approve to publish!
 
 ---
 
