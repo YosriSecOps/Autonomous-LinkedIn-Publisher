@@ -21,10 +21,10 @@
 **[FR]** Le **Autonomous LinkedIn Publisher** est un service multi-utilisateurs de niveau entreprise, propulsé par l'environnement Antigravity. Il permet à plusieurs utilisateurs de s'inscrire via un bot Telegram, de définir leur persona professionnel et de laisser l'IA gérer entièrement leur présence sur LinkedIn avec **zéro coût d'API**.
 
 The system autonomously / Le système de façon autonome :
-1. 🧠 **Drafts personalized posts / Rédige des posts personnalisés**
-2. 🎨 **Generates consistent images / Génère des images cohérentes**
-3. 📱 **Requests human approval / Demande l'approbation humaine via Telegram**
-4. 🌐 **Publishes automatically / Publie automatiquement via Playwright**
+1. 🧠 **Drafts human-sounding posts / Rédige des posts authentiques** — Written in first person with personal opinions, storytelling, and real insights. No generic AI tone.
+2. 🎨 **Generates topic-based images / Génère des images thématiques** — Images illustrate the post's concept (not portraits). Users choose whether to include an image or go text-only.
+3. 📱 **Requests human approval / Demande l'approbation humaine via Telegram** — Nothing is published without your explicit ✅ Approve.
+4. 🌐 **Publishes automatically / Publie automatiquement via Playwright** — Isolated browser sessions per user.
 
 ---
 
@@ -32,8 +32,9 @@ The system autonomously / Le système de façon autonome :
 
 - 👥 **Multi-Tenant Architecture**: Supports hundreds of users concurrently. / *Prend en charge des centaines d'utilisateurs simultanément.*
 - 💬 **Conversational Onboarding**: Users text `/start` to the Telegram bot to build their AI profile interactively. / *Les utilisateurs envoient `/start` au bot pour créer leur profil.*
-- 🎭 **Persona Matching**: Automatically adapts to each user's specific field (e.g., Cybersecurity) and tone. / *S'adapte au domaine (ex: Cybersécurité) et au ton de chaque utilisateur.*
-- 📸 **Character Consistency**: Generates visual illustrations that consistently resemble the user. / *Génère des illustrations qui ressemblent à l'utilisateur.*
+- 🎭 **Persona Matching**: Automatically adapts to each user's specific field (e.g., Cybersecurity) and tone. / *S'adapte au domaine et au ton de chaque utilisateur.*
+- ✍️ **Human-Sounding Content**: Posts are written with personal opinions, storytelling, and conversational tone — never generic AI filler. / *Les posts sont rédigés avec des opinions personnelles et un ton conversationnel.*
+- 🖼️ **Optional Topic-Based Images**: Users choose whether to include an AI-generated image. Images represent the post's concept, not the user. / *Les utilisateurs choisissent d'inclure une image ou non.*
 - 🔒 **Isolated Browser Sessions**: Stores Playwright session cookies in isolated folders (`browser-data/profile_<id>`) to prevent cross-account contamination. / *Sessions de navigateur isolées pour la sécurité.*
 - ⚡ **On-Demand Content**: Provide a link and the AI writes a post about it! / *Fournissez un lien et l'IA écrit un post à ce sujet !*
 
@@ -88,13 +89,18 @@ npm run telegram:start
    - LinkedIn Credentials *(Identifiants LinkedIn sécurisés)*
 
 **Available Bot Commands / Commandes Disponibles :**
-- `/start` — Begin the onboarding process.
-- `/field` — Change your active field or theme.
-- `/connect` — Update your LinkedIn email or password.
-- `/post [link/text]` — **On-Demand Generation:** Queue a request for the AI to generate a post immediately based on a link or topic! *(Générer un post à la demande à partir d'un lien)*
+| Command | Description |
+|---------|-------------|
+| `/start` | Begin the onboarding process / *Démarrer l'inscription* |
+| `/post [link/text]` | Request a new post (with optional link) / *Demander un nouveau post* |
+| `/field` | Change your industry or theme / *Changer votre domaine* |
+| `/connect` | Update your LinkedIn credentials / *Mettre à jour vos identifiants* |
 
-### Autonomous Publishing / Publication Autonome
-The Antigravity agent uses the `.agents/skills/linkedin-publisher/SKILL.md` instruction set. Schedule the agent to run (e.g. every 15 minutes) to process the queue, draft content, and send drafts to Telegram for approval. 
+### On-Demand Publishing / Publication à la Demande
+1. Send `/post https://github.com/...` or `/post` (for auto-generated content) to the bot.
+2. The bot asks: *"Do you want an AI image?"* — choose 🖼️ Yes or 📝 No.
+3. The Antigravity agent picks up your request, drafts a human-sounding post, and sends you the draft in Telegram.
+4. Click ✅ Approve to publish, or ❌ Reject to discard!
 
 ---
 

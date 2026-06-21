@@ -6,6 +6,8 @@ node_modules/
 
 # Database
 memory.db
+memory.db-shm
+memory.db-wal
 
 # Browser session data
 browser-data/
