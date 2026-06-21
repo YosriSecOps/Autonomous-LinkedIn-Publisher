@@ -1,7 +1,7 @@
 import db from '../src/database/connection.js';
 import { getActiveProfiles, getProfileById, getProfileByChatId } from '../src/database/profiles.js';
 import { getRecentTopics, insertDraft, updateStatus, markPublished } from '../src/database/postHistory.js';
-import { insertRequest, getPendingRequests, updateRequestStatus } from '../src/database/requests.js';
+import { insertRequest, getPendingRequests, updateRequestStatus, setImageChoice } from '../src/database/requests.js';
 
 function parseArgs() {
     const args = process.argv.slice(2);

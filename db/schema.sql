@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS Pending_Requests (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     profile_id INTEGER NOT NULL REFERENCES Profiles(id),
     source_content TEXT,
-    status TEXT DEFAULT 'pending' CHECK(status IN ('pending','processing','completed','failed')),
+    include_image BOOLEAN DEFAULT 0,
+    status TEXT DEFAULT 'waiting_image_choice' CHECK(status IN ('waiting_image_choice','pending','processing','completed','failed')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

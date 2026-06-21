@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { getProfileByChatId, upsertProfileByChatId, updateProfileField } from '../src/database/profiles.js';
-import { insertRequest } from '../src/database/requests.js';
+import { insertRequest, setImageChoice } from '../src/database/requests.js';
 
 dotenv.config();
 
@@ -15,7 +15,19 @@ const { BaseScene, Stage } = Scenes;
 const onboardingScene = new BaseScene('onboarding');
 onboardingScene.enter((ctx) => {
     ctx.session.step = 0;
-    ctx.reply("Welcome to Autonomous LinkedIn Publisher! Let's set up your profile.\n\nFirst, what is your field of work or study? (e.g. Cybersecurity, Machine Learning, Digital Marketing)");
+    const introMessage = `Welcome to the *Autonomous LinkedIn Publisher*! 🚀\n\n` +
+        `I am your personal AI assistant designed to manage your LinkedIn presence. Here is how I work:\n\n` +
+        `1. *On-Demand Posting*: Send me a link (like an article or GitHub repo) using \`/post https://...\` and I will instantly draft a LinkedIn post about it for you.\n` +
+        `2. *Auto-Pilot*: Send \`/post\` without a link, and I will search the web for trending topics in your industry and write a fresh post from scratch.\n` +
+        `3. *Approval Required*: Nothing gets published without your permission! I will always send you the draft and a custom-generated image here in Telegram first. You just click ✅ Approve.\n\n` +
+        `*Commands*:\n` +
+        `/start - Restart this setup\n` +
+        `/post [link] - Request a new post\n` +
+        `/field - Change your industry or theme\n` +
+        `/connect - Update your LinkedIn credentials\n\n` +
+        `Let's get your profile set up so I can start working for you!\n\n` +
+        `First, what is your *field of work or study*? (e.g. Cybersecurity, Machine Learning, Digital Marketing)`;
+    ctx.reply(introMessage, { parse_mode: 'Markdown' });
 });
 
 onboardingScene.on('text', async (ctx) => {
@@ -177,12 +189,22 @@ async function runBot() {
             const sourceContent = text.length > 0 ? text : null;
 
             try {
-                insertRequest(profile.id, sourceContent);
-                if (sourceContent) {
-                    ctx.reply("Got it! I've added this to the queue. The AI will analyze the content and send you a draft soon.");
-                } else {
-                    ctx.reply("Got it! I've added a request to the queue. The AI will generate a fresh post tailored to your field soon.");
-                }
+                const requestId = insertRequest(profile.id, sourceContent);
+                const summary = sourceContent 
+                    ? `📋 *Queued!* I'll analyze this content and draft a post for you.`
+                    : `📋 *Queued!* I'll search for trending topics in your field and draft a fresh post.`;
+                
+                await ctx.reply(summary + `\n\nDo you want me to generate an AI image for this post?`, {
+                    parse_mode: 'Markdown',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                { text: '🖼️ Yes, generate an image', callback_data: `img_yes_${requestId}` },
+                                { text: '📝 No, text only', callback_data: `img_no_${requestId}` }
+                            ]
+                        ]
+                    }
+                });
             } catch (e) {
                 ctx.reply("Error queuing your request: " + e.message);
             }
@@ -190,6 +212,21 @@ async function runBot() {
 
         bot.on('callback_query', async (ctx) => {
             const data = ctx.callbackQuery.data;
+            
+            // Handle image preference choice
+            if (data.startsWith('img_yes_') || data.startsWith('img_no_')) {
+                const wantsImage = data.startsWith('img_yes_');
+                const requestId = data.split('_').slice(2).join('_'); // handles multi-part IDs
+                setImageChoice(requestId, wantsImage);
+                await ctx.answerCbQuery(wantsImage ? 'Image will be generated!' : 'Text-only post it is!');
+                await ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+                const confirmMsg = wantsImage 
+                    ? '🖼️ Got it! I\'ll generate an image about the post topic. Your draft will arrive shortly!'
+                    : '📝 Got it! Text-only post. Your draft will arrive shortly!';
+                await ctx.reply(confirmMsg);
+            }
+            
+            // Handle post approval/rejection
             if (data.startsWith('approve_') || data.startsWith('reject_')) {
                 const [action, postId] = data.split('_');
                 const approvalPath = path.join(process.cwd(), `assets/generated/approval_${postId}.json`);
