@@ -6,8 +6,17 @@ description: Autonomously generates and publishes LinkedIn posts for multiple pr
 ### Overview
 This skill operates the Autonomous LinkedIn Publisher for all onboarded users. It processes the queue of pending requests made by users via Telegram.
 
+### Quick Start
+When the user says "start the linkedin publisher", "turn on the schedule", or "run the linkedin-publisher skill", do the following:
+1. **Ensure the Telegram bot is running.** Check if `npm run telegram:start` is already running. If not, start it in the background.
+2. **Start the Queue Monitor.** Set a recurring cron schedule (`* * * * *` = every 1 minute) that runs the Execution Sequence below. This is the heartbeat of the system.
+3. **Report back.** Confirm to the user that the system is live.
+
+### Stopping
+When the user says "stop the schedule" or "pause the publisher", kill the cron task. Do NOT kill the Telegram bot (it should keep running for onboarding).
+
 ### Prerequisites
-- The project must be set up at `c:\Users\yhamd\OneDrive\Desktop\Autonomous LinkedIn Publisher`
+- The project is at `c:\Users\yhamd\OneDrive\Desktop\Autonomous LinkedIn Publisher`
 - Telegram bot running in background: `npm run telegram:start`
 
 ### Execution Sequence
