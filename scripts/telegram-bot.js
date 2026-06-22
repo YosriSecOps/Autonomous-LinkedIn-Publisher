@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import { getProfileByChatId, upsertProfileByChatId, updateProfileField } from '../src/database/profiles.js';
 import { insertRequest, setImageChoice } from '../src/database/requests.js';
+import { getPostById, updateStatus } from '../src/database/postHistory.js';
+import { exec } from 'child_process';
 
 dotenv.config();
 
@@ -236,6 +238,32 @@ async function runBot() {
                 }));
                 await ctx.answerCbQuery(`${action}d successfully`);
                 await ctx.editMessageReplyMarkup({ inline_keyboard: [] }); // Remove buttons
+                
+                if (action === 'approve') {
+                    await ctx.reply("🚀 Approved! Publishing to your LinkedIn now. This might take a minute...");
+                    const post = getPostById(postId);
+                    if (post) {
+                        updateStatus(postId, 'approved');
+                        
+                        // Execute Playwright publishing
+                        let cmd = `node scripts/linkedin-publisher.js --profile-id ${post.profile_id} --text ${JSON.stringify(post.post_text)}`;
+                        if (post.image_path) {
+                            cmd += ` --image ${JSON.stringify(post.image_path)}`;
+                        }
+                        
+                        exec(cmd, async (error, stdout, stderr) => {
+                            if (error) {
+                                await ctx.reply("❌ Error publishing to LinkedIn: " + error.message);
+                                console.error(error);
+                            } else {
+                                await ctx.reply("✅ Successfully published to LinkedIn! Check your profile.");
+                            }
+                        });
+                    }
+                } else {
+                    updateStatus(postId, 'rejected');
+                    await ctx.reply("Draft rejected. It will not be published.");
+                }
             }
         });
 
